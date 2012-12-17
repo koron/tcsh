@@ -1,3 +1,4 @@
+*.ilk
 *.obj
 *.pdb
 config.h
@@ -5,4 +6,6 @@ ed.defns.h
 sh.err.h
 tc.const.h
 tcsh-*.exe
+tcsh.map
+win32/BSDLOGO.res
 win32/nt.const.h
