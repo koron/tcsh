@@ -86,7 +86,8 @@ void init_clipboard(void) {
 
 	if (!ht)
 		abort();
-	CloseHandle(ht);
+    if (ht != NULL)
+        CloseHandle(ht);
 }
 
 BOOL InitApplication(HINSTANCE hInstance)
@@ -244,7 +245,7 @@ CCRETVAL e_paste_from_clipboard(Char c) {
 		cbp = clipbuf;
 		len = 0;
 
-		while(*cbp && *cbp != '\r') {
+		while(cbp && *cbp && *cbp != '\r') {
 			len++;
 			cbp++;
 		}
@@ -257,7 +258,7 @@ CCRETVAL e_paste_from_clipboard(Char c) {
 		if (LastChar + len >= InputLim)
 			goto error;
 
-		while(*cbp && *cbp !='\r' && (cp <LastChar) ) {
+		while(cbp && *cbp && *cbp !='\r' && (cp <LastChar) ) {
 			*cp = *cbp ;
 			cp++;cbp++;
 		}
@@ -424,7 +425,7 @@ void clip_reader_proc(HANDLE houtpipe) {
 
 		cbp = clipbuf;
 
-		while(*cbp ) {
+		while (cbp && *cbp ) {
 			*ptr++ = *cbp++;
 			len++;
 			if (len == obsize) {

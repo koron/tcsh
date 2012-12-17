@@ -433,7 +433,7 @@ unsigned int alarm(unsigned int seconds) {
 	if (!__halarm) {
 		__halarm=CreateEvent(&secd,FALSE,FALSE,NULL);
 	}
-	if(__alarm_set )
+	if(__alarm_set && __halarm != NULL)
 		SetEvent(__halarm);
 
 	if (!seconds){
@@ -526,8 +526,8 @@ void start_sigchild_thread(HANDLE hproc, DWORD pid) {
 							0,
 							&tid);
 
-
-	CloseHandle(hthr);
+    if (hthr != NULL)
+        CloseHandle(hthr);
 
 }
 int kill(int pid, int sig) {
@@ -573,11 +573,12 @@ int kill(int pid, int sig) {
                 dprintf("proc %d found\n",pid);
             }
             if (sig == 7) {
-                if (!TerminateProcess(hproc,0xC000013AL) ) {
+                if (hproc != NULL && !TerminateProcess(hproc,0xC000013AL) ) {
                     ret = -1;
                 }
             }
-            CloseHandle(hproc);
+            if (hproc != NULL)
+                CloseHandle(hproc);
             break;
         case 1:
             if (!GenerateConsoleCtrlEvent(CTRL_C_EVENT,pid)) 

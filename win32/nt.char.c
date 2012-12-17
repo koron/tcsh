@@ -116,7 +116,7 @@ void nls_dll_init(void) {
 	size_t size = 0;
 
 
-	if (_dupenv_s(&ptr,&size,"TCSHLANG") == 0){
+	if (_dupenv_s(&ptr,&size,"TCSHLANG") == 0 && ptr != NULL){
 
 		if (hlangdll)
 			FreeLibrary(hlangdll);

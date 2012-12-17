@@ -1,0 +1,8 @@
+*.obj
+*.pdb
+config.h
+ed.defns.h
+sh.err.h
+tc.const.h
+tcsh-*.exe
+win32/nt.const.h

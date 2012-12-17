@@ -957,7 +957,6 @@ int nt_texec(char *prog, char**args ) {
 	{
 		retval = 1;
 		errno  = ENOMEM;
-		heap_free(originalPtr);
 		goto free_mem;
 	}
 

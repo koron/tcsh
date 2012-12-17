@@ -150,7 +150,10 @@ int is_gui(char *exename) {
                 return 0;
         }
 
-        ReadFile(hImage, &dh, sizeof(struct DosHeader), &bytes,&overlap);
+        if (ReadFile(hImage, &dh, sizeof(struct DosHeader), &bytes,
+                    &overlap) == FALSE) {
+            return 0;
+        }
         CHECK_IO(hImage,&overlap);
 
 
@@ -161,7 +164,10 @@ int is_gui(char *exename) {
         // read from the coffheaderoffset;
         overlap.Offset = dh.doshdr.e_lfanew;
 
-        ReadFile(hImage, &ntSignature, sizeof(ULONG), &bytes,&overlap);
+        if (ReadFile(hImage, &ntSignature, sizeof(ULONG), &bytes,
+                    &overlap) == FALSE) {
+            return 0;
+        }
         CHECK_IO(hImage,&overlap);
 
         if (IMAGE_NT_SIGNATURE != ntSignature) {
@@ -170,7 +176,10 @@ int is_gui(char *exename) {
         overlap.Offset = dh.doshdr.e_lfanew + sizeof(ULONG) +
                 sizeof(IMAGE_FILE_HEADER);
 
-        ReadFile(hImage, &optionalhdr,IMAGE_SIZEOF_NT_OPTIONAL_HEADER, &bytes,&overlap);
+        if (ReadFile(hImage, &optionalhdr,IMAGE_SIZEOF_NT_OPTIONAL_HEADER,
+                    &bytes,&overlap) == FALSE) {
+            return 0;
+        };
         CHECK_IO(hImage,&overlap);
 
         if (optionalhdr.Subsystem ==IMAGE_SUBSYSTEM_WINDOWS_GUI)

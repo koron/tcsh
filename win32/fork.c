@@ -109,13 +109,16 @@ static NT_TIB *the_tib;
 
 #if !defined(_M_IA64) && !defined(_M_AMD64)
 void *get_teb(void) {
+    HANDLE hNtdll;
 
 
 	if (the_tib)
 		return the_tib;
 
-	myNtCurrentTeb = (void*)GetProcAddress(LoadLibrary("ntdll.dll"),
-							"NtCurrentTeb");
+    hNtdll = LoadLibrary("ntdll.dll");
+    if (hNtdll == NULL)
+        return NULL;
+	myNtCurrentTeb = (void*)GetProcAddress(hNtdll, "NtCurrentTeb");
 	if (!myNtCurrentTeb)
 		return NULL;
 	the_tib = myNtCurrentTeb();
@@ -213,7 +216,7 @@ int fork(void) {
 
 	rc = setjmp(__fork_context);
 
-	if (rc) { // child
+	if (rc && __hforkchild != NULL && __hforkparent != NULL) { // child
 #ifdef  _M_IX86
 		//
 		// Restore old registration
@@ -273,8 +276,10 @@ int fork(void) {
 		return -1;
 	}
 
-	ResetEvent(__hforkchild);
-	ResetEvent(__hforkparent);
+    if (__hforkchild != NULL)
+        ResetEvent(__hforkchild);
+    if (__hforkparent != NULL)
+        ResetEvent(__hforkparent);
 
 	hProc = pi.hProcess;
 	hThread = pi.hThread;
@@ -436,7 +441,8 @@ int fork(void) {
 
 error:
 	__forked=0;
-	SetEvent(__hforkparent);
+    if (__hforkparent != NULL)
+        SetEvent(__hforkparent);
 	ResumeThread(hThread);
 	CloseHandle(hProc);
 	CloseHandle(hThread);
